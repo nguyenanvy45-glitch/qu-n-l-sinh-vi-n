@@ -1,0 +1,52 @@
+// --- Khởi tạo dữ liệu an toàn ngay lập tức ---
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadData);
+} else {
+  loadData();
+}
+
+// --- Cập nhật save với try/catch và update lastSaved ---
+function saveTasksToStorage(tasks) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    updateLastSaved();
+  } catch (err) {
+    console.error('Lỗi lưu vào localStorage:', err);
+    alert('Không thể lưu nhiệm vụ — bộ nhớ trình duyệt có thể đã đầy.');
+  }
+}
+
+// --- Keyboard support cho toggle (Enter / Space) ---
+taskList.addEventListener('keydown', function (e) {
+  const textEl = e.target.closest && e.target.closest('.task-text');
+  if (!textEl) return;
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    const li = textEl.closest('li');
+    if (!li) return;
+    toggleTaskById(li.dataset.id);
+  }
+});
+
+// --- Cập nhật filter buttons: aria-pressed & active class ---
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.setAttribute('role', 'tab');
+  btn.setAttribute('aria-pressed', 'false');
+  btn.addEventListener('click', () => {
+    // cập nhật trạng thái ARIA + lớp active
+    document.querySelectorAll('[data-filter]').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    filterTasks(btn.dataset.filter);
+  });
+});
+
+// --- Style nhỏ cho nút active (thêm vào <style>) ---
+/* .btn.secondary.active { outline: 2px solid rgba(0,0,0,0.08); background: #e9ecef; color: #000; } */
+
+// --- Export: đặt tên file kèm timestamp và revokeAn toàn ---
+function exportData() {
+  const data = localStorage.getItem*
